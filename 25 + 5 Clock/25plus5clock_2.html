@@ -108,8 +108,8 @@
             justify-content: space-between;
         }
 
-        #start_stop,
         #button-pause,
+        #start_stop,
         #reset {
             flex: 1;
             margin: 1vh;
@@ -156,37 +156,24 @@
 
         const useTimer = ({ paused, sessionLengthSeconds, sessionId }) => {
             
-            const [startTime, setStartTime] = React.useState(new Date());
-            const [tick, setTick] = React.useState(false);
-            const [pauseTime, setPauseTime] = React.useState(new Date());
-
-            console.log('use timer',{paused,sessionLengthSeconds,sessionId,startTime,pauseTime});
+            const [timeLeft, setTimeLeft] = React.useState(sessionLengthSeconds);
             
-            const currentTime = new Date();
-            const duration = startTime == null ? 0 : Math.floor((currentTime.getTime() - startTime.getTime()) / 1000);
-
             React.useEffect(() => {
                 if (!paused) {
-                    setStartTime(new Date(currentTime.getTime() - pauseTime.getTime() + startTime.getTime()));
                     const tid = setInterval(() => {
-                        setTick((curTick) => !curTick);
+                        setTimeLeft(tl => tl-1);
                     }, 1000);
                     return () => {
                         clearInterval(tid);
                     }
                 }
-                else {
-                    setPauseTime(new Date());
-                }
             }, [paused]);
 
             React.useEffect(() => {
-                setStartTime(new Date());
-                setPauseTime(new Date());
+                setTimeLeft(sessionLengthSeconds);
             }, [sessionId, sessionLengthSeconds]);
 
-            // return e('div', { id: 'main-clock' }, formatTime(Math.max(0,sessionLengthSeconds - duration)));
-            return { remainingTime: sessionLengthSeconds - duration }
+            return { remainingTime: timeLeft}
         }
 
         const Timer = ({ remainingTime, title }) => {
@@ -201,11 +188,13 @@
             const [paused, setPaused] = React.useState(true);
             const [sessionId, setSessionId] = React.useState(0);
             const [isBreak, setIsBreak] = React.useState(false);
+            const beepingSound = React.useRef(null);
 
             const { remainingTime } = useTimer({ paused, sessionLengthSeconds: !isBreak ? sessionValue * 60 : breakValue * 60, sessionId });
 
             React.useEffect(() => {
                 if (remainingTime < 0) {
+                    beepingSound.current.play();
                     setIsBreak(b=>!b);
                     setSessionId(i => i+1);
                 }
@@ -281,6 +270,8 @@
                         setSessionValue(25);
                         setPaused(true);
                         setIsBreak(false);
+                        beepingSound.current.pause();
+                        beepingSound.current.currentTime = 0;
                         break;
                 }
             }
@@ -301,11 +292,13 @@
                         ]),
                     ]),
                     e(Timer, { remainingTime, title: isBreak ? 'Break' : 'Session' }),
-                    e('div', { id: 'main-buttons'}, [e('div', { id: 'start_stop', class: 'fa-solid fa-play', onClick: () => onPress("play") }, null),
+                    e('div', { id: 'main-buttons' }, [e('div', { id: 'start_stop', class: 'fa-solid fa-play', onClick: () => onPress("play") }, null),
                     e('div', { id: 'button-pause', class: 'fa-solid fa-pause', onClick: () => onPress("pause") }, null),
                     e('div', { id: 'reset', class: 'fa-solid fa-arrows-rotate', onClick: () => onPress("reset") }, null)
-                    ])
+                    ]),
+                    e('audio', { ref: beepingSound, id: 'beep', preload: 'auto', src: 'https://cdn.freecodecamp.org/testable-projects-fcc/audio/BeepSound.wav' }, null)
                 ])
+
             ];
         }
 
@@ -316,6 +309,5 @@
 </body>
 
 </html>
-
 
 <!-- <audio id="beep" preload="auto" src="https://cdn.freecodecamp.org/testable-projects-fcc/audio/BeepSound.wav"></audio> -->
