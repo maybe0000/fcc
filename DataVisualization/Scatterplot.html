@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Edu+AU+VIC+WA+NT+Dots:wght@400..700&family=Edu+AU+VIC+WA+NT+Guides:wght@400..700&family=Gloria+Hallelujah&family=Londrina+Sketch&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Edu+AU+VIC+WA+NT+Dots:wght@400..700&family=Edu+AU+VIC+WA+NT+Guides:wght@400..700&family=Londrina+Sketch&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <title>D3 Scatter Plot</title>
+</head>
+
+<body>
+    <style>
+        html,
+        body {
+            background-color: rgb(66, 100, 105);
+            font-family: 'Space Mono', monospace;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(250, 252, 217);
+        }
+
+        #main-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 80%;
+            width: 90%;
+            background-color: rgb(251, 205, 212);
+        }
+
+        .titles {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 4%;
+            padding: 2vh 0;
+            text-align: center;
+            color: black;
+        }
+
+        #title {
+            font-size: large;
+            width: 100%;
+        }
+
+        #subtitle {
+            font-size: medium;
+            width: 100%;
+        }
+
+        #scatterplot-chart {
+            width: 100%;
+            height: 96%;
+        }
+
+        svg {
+            background-color: rgb(190, 202, 181);
+        }
+
+        .bar:hover {
+            fill: rgb(190, 202, 181);
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            flex-direction: row;
+            width: 100%;
+            padding-bottom: 1vh;
+            bottom: 10px;
+            white-space: nowrap;
+        }
+
+        footer a {
+            color: rgb(226, 206, 237);
+            font-size: small;
+            text-decoration: none;
+            font-family: "Gloria Hallelujah", monospace;
+        }
+
+        .author-footer {
+            text-align: right;
+            padding-right: 2vh;
+        }
+
+        .source-footer {
+            padding-left: 2vh;
+        }
+
+        footer a:hover {
+            color: rgb(18, 32, 9);
+            text-decoration: underline;
+        }
+
+        #tooltip {
+            position: absolute;
+            background-color: rgb(190, 202, 181);
+            border: 1px solid rgb(66, 100, 105);
+            padding: 1vh;
+            border-radius: 1vh;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+    <div id="main-screen">
+        <div class="titles">
+            <div id="title">
+                Doping in Professional Bicycle Racing
+            </div>
+            <div id="subtitle">
+                35 Fastest times up Alpe d'Huez
+            </div>
+        </div>
+        <div id="scatterplot-chart">
+        </div>
+        <div id="tooltip"></div>
+    </div>
+    <footer>
+        <a class="source-footer"
+            href="https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json"
+            target="_blank">Source</a>
+        <a class="author-footer" href="https://www.freecodecamp.org/fcc4c0f1f3d-90fc-4156-9b7a-b404d3fbad60"
+            target="_blank">Author: Sara Markic</a>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
+
+    <script>
+        let bicycleData;
+        fetch('https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/cyclist-data.json')
+            .then(response => response.json())
+            .then(data => {
+                bicycleData = data;
+
+
+            }
+            });
+
+    </script>
+</body>
+
+</html>
