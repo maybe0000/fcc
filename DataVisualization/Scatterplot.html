@@ -34,7 +34,7 @@
             align-items: center;
             height: 80%;
             width: 90%;
-            background-color: rgb(251, 205, 212);
+            background-color: rgb(254, 230, 234);
         }
 
         .titles {
@@ -64,9 +64,7 @@
             height: 96%;
         }
 
-        svg {
-            background-color: rgb(190, 202, 181);
-        }
+        svg {}
 
         .bar:hover {
             fill: rgb(190, 202, 181);
@@ -104,6 +102,14 @@
             text-decoration: underline;
         }
 
+        #legend {
+            background-color: white;
+            position: absolute;
+            right: 15vh;
+            bottom: 15vh;
+            border: 1px solid teal;
+        }
+
         #tooltip {
             position: absolute;
             background-color: rgb(190, 202, 181);
@@ -126,6 +132,7 @@
         </div>
         <div id="scatterplot-chart">
         </div>
+        <div id="legend"></div>
         <div id="tooltip"></div>
     </div>
     <footer>
@@ -145,9 +152,116 @@
             .then(data => {
                 bicycleData = data;
 
+                renderChart();
+                window.addEventListener('resize', renderChart);
 
-            }
-            });
+                function renderChart() {
+
+                    d3.select("#scatterplot-chart svg").remove();
+
+                    const svg = d3.select("#scatterplot-chart")
+                        .append("svg")
+                        .attr("width", "100%")
+                        .attr("height", "100%")
+                        .attr("overflow", "visible");
+
+                    const svgWidth = svg.node().getBoundingClientRect().width;
+                    const svgHeight = svg.node().getBoundingClientRect().height;
+
+                    function convertToDate(mmss) {
+                        const [mm, ss] = mmss.split(":");
+                        const d = new Date(0);
+                        d.setMinutes(Number(mm));
+                        d.setSeconds(Number(ss));
+                        return d;
+                    }
+
+                    const yScale = d3.scaleLinear()
+                        .domain([d3.min(bicycleData, d => convertToDate(d.Time)), d3.max(bicycleData, d => convertToDate(d.Time))])
+                        .range([svgHeight - 10, 0]);
+
+                    const xScale = d3.scaleLinear()
+                        .domain([d3.min(bicycleData, d => d.Year) - 1, d3.max(bicycleData, d => d.Year) + 1])
+                        .range([0, svgWidth]);
+
+                    svg.selectAll("circle")
+                        .data(bicycleData)
+                        .enter()
+                        .append("circle")
+                        .attr("class", "dot")
+                        .attr("cx", (d) => {
+                            return xScale(d.Year);
+                        })
+                        .attr("cy", d => {
+                            return yScale(convertToDate(d.Time));
+                        })
+                        .attr("data-xvalue", (d) => {
+                            return d.Year;
+                        })
+                        .attr("data-yvalue", d => {
+                            return convertToDate(d.Time);
+                        })
+                        .attr("r", 5)
+                        .attr("fill", (d) => {
+                            if (d.Doping == "") {
+                                return "orange";
+                            }
+                            else {
+                                return "teal";
+                            }
+                        });
+
+                        const xAxis = d3.axisBottom(xScale)
+                            .tickFormat(String);
+
+                        svg.append("g")
+                            .attr("id", "x-axis")
+                            .attr("transform", "translate(0, " + (svgHeight) + ")")
+                            .call(xAxis);
+
+                        const yAxis = d3.axisLeft(yScale)
+                            .tickFormat(d3.timeFormat('%M:%S'));
+
+                        svg.append("g")
+                            .attr("id", "y-axis")
+                            .call(yAxis);
+
+                    const legendSvg = d3.select("#legend")
+                                        .append("svg")
+                                        .attr("width",200)
+                                        .attr("height",50);
+
+                          legendSvg.append("circle")
+                                        .attr("cx",20)
+                                        .attr("cy",20)
+                                        .attr("r", 5)
+                                        .style("fill", "orange");
+
+                           legendSvg.append("circle")
+                                        .attr("cx",20)
+                                        .attr("cy",40)
+                                        .attr("r", 5)
+                                        .style("fill", "teal");
+
+
+                           legendSvg.append("text")
+                                        .attr("x", 35)
+                                        .attr("y", 21)
+                                        .text("No doping allegations")
+                                        .style("font-size", "10px")
+                                        .attr("alignment-baseline", "middle");
+                            
+                            legendSvg.append("text")
+                                        .attr("x", 35)
+                                        .attr("y", 41)
+                                        .text("Doping allegations")
+                                        .style("font-size", "10px")
+                                        .attr("alignment-baseline", "middle");
+
+                    }
+
+                }
+            );
 
     </script>
 </body>
