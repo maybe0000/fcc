@@ -144,9 +144,8 @@
                         .domain([0, d3.max(gdpData, d => d[1])])
                         .range([svgHeight, 0]);
 
-
                     const xScale = d3.scaleTime([new Date(d3.min(gdpData, (d) => d[0])), new Date(d3.max(gdpData, (d) => d[0]))],
-                        [0, svgWidth]
+                        [0, svgWidth - barWidth]
                     );
 
                     svg.selectAll("rect")
