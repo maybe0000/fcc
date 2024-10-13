@@ -53,23 +53,42 @@
             background-color: pink;
         }
 
-        footer,
-        a {
-            text-align: right;
+        .bar:hover {
+            fill: rgb(190, 202, 181);
+        }
+
+        footer {
+            display: flex; 
+            justify-content: space-between; 
+            position: absolute; 
+            flex-direction: row;
+            width: 100%; 
+            padding-bottom: 1vh;
+            bottom: 10px;
+            white-space: nowrap;
+        }
+
+        footer a {
             color: rgb(226, 206, 237);
-            font-size: medium;
+            font-size: large;
             text-decoration: none;
             font-family: 'Reenie Beanie', 'B612 Mono', monospace;
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            white-space: nowrap;
+        }
+
+        .author-footer {
+            text-align: right;
+            padding-right: 1vh;
+        }
+
+        .source-footer {
+            padding-left: 1vh;
         }
 
         footer a:hover {
             color: rgb(18, 32, 9);
             text-decoration: underline;
         }
+
     </style>
     <div id="main-screen">
         <div id="title">
@@ -80,7 +99,8 @@
         </div>
     </div>
     <footer>
-        <a href="https://www.freecodecamp.org/fcc4c0f1f3d-90fc-4156-9b7a-b404d3fbad60">Author: Sara Markic</a></p>
+        <a class="source-footer" href="https://bar-chart.freecodecamp.rocks/script.js" target="_blank">Source</a>
+        <a class="author-footer" href="https://www.freecodecamp.org/fcc4c0f1f3d-90fc-4156-9b7a-b404d3fbad60" target="_blank">Author: Sara Markic</a>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
