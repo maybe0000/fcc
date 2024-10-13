@@ -123,6 +123,13 @@
                             return i * barWidth;
                         })
                         .attr("y", d => yScale(d[1]))
+                        .attr("class","bar")
+                        .attr("data-date", (d,i) => {
+                            return gdpData[i][0];
+                        })
+                        .attr("data-gdp", (d,i) => {
+                            return gdpData[i][1];
+                        })
                         .attr("fill", (d, i) => {
                             return "rgb(103, 117, 95)";
                         });
