@@ -111,7 +111,12 @@
 
                     const yScale = d3.scaleLinear()
                         .domain([0, d3.max(gdpData, d => d[1])])
-                        .range([svgHeight,0]);
+                        .range([svgHeight, 0]);
+
+
+                    const xScale = d3.scaleTime([new Date(d3.min(gdpData, (d) => d[0])), new Date(d3.max(gdpData, (d) => d[0]))],
+                        [0, svgWidth]
+                    );
 
                     svg.selectAll("rect")
                         .data(gdpData)
@@ -120,7 +125,8 @@
                         .attr("width", barWidth)
                         .attr("height", d => svgHeight - yScale(d[1]))
                         .attr("x", (d, i) => {
-                            return i * barWidth;
+                            //  return i * barWidth;
+                             return xScale(new Date(d[0])); 
                         })
                         .attr("y", d => yScale(d[1]))
                         .attr("class","bar")
@@ -133,10 +139,6 @@
                         .attr("fill", (d, i) => {
                             return "rgb(103, 117, 95)";
                         });
-
-                    const xScale = d3.scaleTime([new Date(d3.min(gdpData, (d) => d[0])), new Date(d3.max(gdpData, (d) => d[0]))],
-                        [0, svgWidth]
-                    );
 
                     const xAxis = d3.axisBottom(xScale)
                         .tickFormat(d3.timeFormat('%Y'));
