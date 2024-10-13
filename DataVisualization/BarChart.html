@@ -89,14 +89,25 @@
             text-decoration: underline;
         }
 
+        #tooltip {
+            position: absolute;
+            background-color: rgb(190, 202, 181);
+            border: 1px solid rgb(66, 100, 105);
+            padding: 1vh;
+            border-radius: 1vh;
+            pointer-events: none; 
+            opacity: 0; 
+            transition: opacity 0.3s;
+        }
+
     </style>
     <div id="main-screen">
         <div id="title">
             US Yearly GDP
         </div>
         <div id="bar-chart">
-
         </div>
+        <div id="tooltip"></div> 
     </div>
     <footer>
         <a class="source-footer" href="https://bar-chart.freecodecamp.rocks/script.js" target="_blank">Source</a>
@@ -158,6 +169,21 @@
                         })
                         .attr("fill", (d, i) => {
                             return "rgb(103, 117, 95)";
+                        })
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+                            const yearQuarter = d3.timeFormat('%Y Q%q');
+                            const dataPointYearQuarter = yearQuarter(new Date(d[0]));
+
+                            tooltip
+                                .style("left", event.pageX + (event.pageX > (document.body.clientWidth - 150) ? (-120) : 20) + "px")
+                                .style("top", event.pageY - 20 + "px") 
+                                .style("opacity", 1) 
+                                .attr("data-date", d[0])
+                                .html(`${dataPointYearQuarter}<br>$${d[1].toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}`); 
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").style("opacity", 0); 
                         });
 
                     const xAxis = d3.axisBottom(xScale)
