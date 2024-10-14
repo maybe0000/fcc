@@ -113,12 +113,14 @@
         #tooltip {
             position: absolute;
             background-color: rgb(190, 202, 181);
-            border: 1px solid rgb(66, 100, 105);
+            border: 1px solid teal;
             padding: 1vh;
             border-radius: 1vh;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s;
+            color: black;
+            font-size: small;
         }
     </style>
     <div id="main-screen">
@@ -158,6 +160,7 @@
                 function renderChart() {
 
                     d3.select("#scatterplot-chart svg").remove();
+                    d3.select("#legend svg").remove();
 
                     const svg = d3.select("#scatterplot-chart")
                         .append("svg")
@@ -209,54 +212,66 @@
                             else {
                                 return "teal";
                             }
+                        })
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+
+                            tooltip
+                                .style("left", event.pageX + 20 + "px")
+                                .style("top", event.pageY - 20 + "px")
+                                .style("opacity", 1)
+                                .attr("data-year", d.Year)
+                                .html(`${d.Name}: ${d.Nationality}<br>Year: ${d.Year}, Time: ${d.Time}` + (d.Doping ? `<br><br>${d.Doping}` : ""));
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").style("opacity", 0);
                         });
 
-                        const xAxis = d3.axisBottom(xScale)
-                            .tickFormat(String);
+        const xAxis = d3.axisBottom(xScale)
+            .tickFormat(String);
 
-                        svg.append("g")
-                            .attr("id", "x-axis")
-                            .attr("transform", "translate(0, " + (svgHeight) + ")")
-                            .call(xAxis);
+        svg.append("g")
+            .attr("id", "x-axis")
+            .attr("transform", "translate(0, " + (svgHeight) + ")")
+            .call(xAxis);
 
-                        const yAxis = d3.axisLeft(yScale)
-                            .tickFormat(d3.timeFormat('%M:%S'));
+        const yAxis = d3.axisLeft(yScale)
+            .tickFormat(d3.timeFormat('%M:%S'));
 
-                        svg.append("g")
-                            .attr("id", "y-axis")
-                            .call(yAxis);
+        svg.append("g")
+            .attr("id", "y-axis")
+            .call(yAxis);
 
-                    const legendSvg = d3.select("#legend")
-                                        .append("svg")
-                                        .attr("width",200)
-                                        .attr("height",50);
+        const legendSvg = d3.select("#legend")
+            .append("svg")
+            .attr("width", 200)
+            .attr("height", 50);
 
-                          legendSvg.append("circle")
-                                        .attr("cx",20)
-                                        .attr("cy",20)
-                                        .attr("r", 5)
-                                        .style("fill", "orange");
+        legendSvg.append("circle")
+            .attr("cx", 20)
+            .attr("cy", 20)
+            .attr("r", 5)
+            .style("fill", "orange");
 
-                           legendSvg.append("circle")
-                                        .attr("cx",20)
-                                        .attr("cy",40)
-                                        .attr("r", 5)
-                                        .style("fill", "teal");
+        legendSvg.append("circle")
+            .attr("cx", 20)
+            .attr("cy", 40)
+            .attr("r", 5)
+            .style("fill", "teal");
 
+        legendSvg.append("text")
+            .attr("x", 35)
+            .attr("y", 21)
+            .text("No doping allegations")
+            .style("font-size", "10px")
+            .attr("alignment-baseline", "middle");
 
-                           legendSvg.append("text")
-                                        .attr("x", 35)
-                                        .attr("y", 21)
-                                        .text("No doping allegations")
-                                        .style("font-size", "10px")
-                                        .attr("alignment-baseline", "middle");
-                            
-                            legendSvg.append("text")
-                                        .attr("x", 35)
-                                        .attr("y", 41)
-                                        .text("Doping allegations")
-                                        .style("font-size", "10px")
-                                        .attr("alignment-baseline", "middle");
+        legendSvg.append("text")
+            .attr("x", 35)
+            .attr("y", 41)
+            .text("Doping allegations")
+            .style("font-size", "10px")
+            .attr("alignment-baseline", "middle");
 
                     }
 
