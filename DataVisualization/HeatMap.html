@@ -26,7 +26,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            color: rgb(250, 252, 217);
+            color: #4A4E69;
         }
 
         #main-screen {
@@ -68,6 +68,10 @@
 
         .bar:hover {
             fill: rgb(190, 202, 181);
+        }
+
+        #x-axis, #y-axis {
+            font-size: small;
         }
 
         footer {
@@ -129,7 +133,7 @@
                 Monthly Global Land-Surface Temperature
             </div>
             <div id="description">
-                1753 - 2015: base temperature 8.66 °C
+               
             </div>
         </div>
         <div id="heatmap-chart">
@@ -157,6 +161,13 @@
 
                 renderChart();
                 window.addEventListener('resize', renderChart);
+
+                //  1753 - 2015: base temperature 8.66 °C
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                d3.select('#description')
+                  .text(d3.min(temperatureData, d => d.year) + ' - ' +d3.max(temperatureData, d => d.year)
+                       + ': base temperature ' + data.baseTemperature + ' °C');
 
                 function renderChart() {
 
@@ -208,13 +219,10 @@
                         })
                         .on("mouseover", (event, d) => {
                             const tooltip = d3.select("#tooltip");
-                            console.log(d.month);
-
-                            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
                             tooltip
-                                .style("left", event.pageX + 20 + "px")
-                                .style("top", event.pageY - 20 + "px")
+                            .style("left", event.pageX + (event.pageX > (document.body.clientWidth - 150) ? (-120) : 20) + "px")
+                            .style("top", event.pageY - 20 + "px")
                                 .style("opacity", 1)
                                 .html(`${d.year} - ${months[d.month - 1]}<br>Variance: ${d.variance}`);
                         })
