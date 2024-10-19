@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Coming+Soon&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>D3 Heat Map</title>
+</head>
+
+<body>
+    <style>
+        html,
+        body {
+            background-color: #B3D9FF;
+            font-family: 'Montserrat', monospace;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgb(250, 252, 217);
+        }
+
+        #main-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 80%;
+            width: 90%;
+            background-color: #F0F0F0;
+        }
+
+        .titles {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 4%;
+            padding: 2vh 0;
+            text-align: center;
+            color: black;
+        }
+
+        #title {
+            font-size: large;
+            width: 100%;
+        }
+
+        #description {
+            font-size: medium;
+            width: 100%;
+        }
+
+        #heatmap-chart {
+            width: 100%;
+            height: 96%;
+        }
+
+        .bar:hover {
+            fill: rgb(190, 202, 181);
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            flex-direction: row;
+            width: 100%;
+            padding-bottom: 1vh;
+            bottom: 10px;
+            white-space: nowrap;
+        }
+
+        footer a {
+            color: #4A4E69;
+            font-size: small;
+            text-decoration: none;
+            font-family: "Coming Soon", monospace;
+        }
+
+        .author-footer {
+            text-align: right;
+            padding-right: 2vh;
+        }
+
+        .source-footer {
+            padding-left: 2vh;
+        }
+
+        footer a:hover {
+            color: #007A7A;
+            text-decoration: underline;
+        }
+
+        #legend {
+            background-color: white;
+            position: absolute;
+            right: 15vh;
+            bottom: 15vh;
+            border: 1px solid teal;
+        }
+
+        #tooltip {
+            position: absolute;
+            background-color: rgb(190, 202, 181);
+            border: 1px solid teal;
+            padding: 1vh;
+            border-radius: 1vh;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: black;
+            font-size: small;
+        }
+    </style>
+    <div id="main-screen">
+        <div class="titles">
+            <div id="title">
+                Monthly Global Land-Surface Temperature
+            </div>
+            <div id="description">
+                1753 - 2015: base temperature 8.66 °C
+            </div>
+        </div>
+        <div id="heatmap-chart">
+        </div>
+        <div id="legend"></div>
+        <div id="tooltip"></div>
+    </div>
+    <footer>
+        <a class="source-footer"
+            href="https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json"
+            target="_blank">Source</a>
+        <a class="author-footer" href="https://www.freecodecamp.org/fcc4c0f1f3d-90fc-4156-9b7a-b404d3fbad60"
+            target="_blank">Author: Sara Markic</a>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
+
+    <script>
+        let temperatureData;
+        var url = 'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                temperatureData = data.monthlyVariance;
+
+                renderChart();
+                window.addEventListener('resize', renderChart);
+
+                function renderChart() {
+
+                    d3.select("#heatmap-chart svg").remove();
+                    d3.select("#legend svg").remove();
+
+                    const svg = d3.select("#heatmap-chart")
+                        .append("svg")
+                        .attr("width", "100%")
+                        .attr("height", "100%")
+                        .attr("overflow", "visible");
+
+                    const svgWidth = svg.node().getBoundingClientRect().width;
+                    const svgHeight = svg.node().getBoundingClientRect().height;
+                    const barWidth = svgWidth / temperatureData.length * 12;
+
+                    const yScale = d3.scaleBand()
+                        .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+                        .range([svgHeight, 0]);
+
+                    const xScale = d3.scaleLinear()
+                        .domain([d3.min(temperatureData, d => d.year) - 1, d3.max(temperatureData, d => d.year) + 1])
+                        .range([0, svgWidth - barWidth]);
+
+                    svg.selectAll("rect")
+                        .data(temperatureData)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "cell")
+                        .attr("x", (d) => {
+                            return xScale(d.year);
+                        })
+                        .attr("y", (d) => {
+                            return yScale(d.month);
+                        })
+                        .attr("width", d => {
+                            return barWidth;
+                        })
+                        .attr("height", d => {
+                            return yScale.bandwidth(); 
+                        })
+                        .attr("fill", (d) => {
+                            if (d.variance < 0) {
+                                return "orange";
+                            }
+                            else {
+                                return "teal";
+                            }
+                        })
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+                            console.log(d.month);
+
+                            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                            tooltip
+                                .style("left", event.pageX + 20 + "px")
+                                .style("top", event.pageY - 20 + "px")
+                                .style("opacity", 1)
+                                .html(`${d.year} - ${months[d.month - 1]}<br>Variance: ${d.variance}`);
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").style("opacity", 0);
+                        });
+
+                    const xAxis = d3.axisBottom(xScale)
+                        .tickFormat(String);
+
+                    svg.append("g")
+                        .attr("id", "x-axis")
+                        .attr("transform", "translate(0, " + (svgHeight) + ")")
+                        .call(xAxis);
+
+                    const yAxis = d3.axisLeft(yScale)
+                        .tickFormat((d) => {
+                            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                            return months[d - 1]; // -1 to adjust for array indexing
+                        });
+
+                    svg.append("g")
+                        .attr("id", "y-axis")
+                        .call(yAxis);
+                }
+            });
+
+
+    </script>
+</body>
+
+</html>
