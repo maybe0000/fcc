@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Coming+Soon&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <title>D3 Choropleth Map</title>
+</head>
+
+<body>
+    <style>
+        html,
+        body {
+            background-color: #B3D9FF;
+            font-family: 'Montserrat', monospace;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #4A4E69;
+            position: relative;
+        }
+
+        #main-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+            background-color: #F0F0F0;
+        }
+
+        .titles {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 2vh 0;
+            text-align: center;
+            color: black;
+        }
+
+        #title {
+            font-size: large;
+            width: 100%;
+        }
+
+        #description {
+            font-size: medium;
+            width: 100%;
+        }
+
+        #choropleth-chart {
+            width: 100%;
+            height: 100%;
+        }
+
+        .bar:hover {
+            fill: rgb(190, 202, 181);
+        }
+
+        #x-axis,
+        #y-axis {
+            font-size: small;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            position: absolute;
+            flex-direction: row;
+            width: 100%;
+            padding-bottom: 1vh;
+            bottom: 10px;
+            white-space: nowrap;
+        }
+
+        footer a {
+            color: #4A4E69;
+            font-size: small;
+            text-decoration: none;
+            font-family: "Coming Soon", monospace;
+        }
+
+        .author-footer {
+            text-align: right;
+            padding-right: 2vh;
+        }
+
+        .source-footer {
+            padding-left: 2vh;
+        }
+
+        footer a:hover {
+            color: #007A7A;
+            text-decoration: underline;
+        }
+
+        #legend {
+            position: absolute;
+            right: 0;
+            width: 5vh;
+            top: 25%;
+        }
+
+        #tooltip {
+            position: absolute;
+            background-color: rgb(190, 202, 181);
+            border: 1px solid teal;
+            padding: 1vh;
+            border-radius: 1vh;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: black;
+            font-size: small;
+            text-align: center;
+        }
+    </style>
+    <div id="main-screen">
+        <div class="titles">
+            <div id="title">
+                United States Educational Attainment
+            </div>
+            <div id="description">
+                Percentage of adults age 25 and older with a bachelor's degree or higher (2010-2014)
+            </div>
+        </div>
+        <div id="choropleth-chart">
+        </div>
+        <div id="tooltip"></div>
+    </div>
+    <div id="legend"></div>
+    <footer>
+        <a class="source-footer"
+            href="https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json"
+            target="_blank">Source</a>
+        <a class="author-footer" href="https://www.freecodecamp.org/fcc4c0f1f3d-90fc-4156-9b7a-b404d3fbad60"
+            target="_blank">Author: Sara Markic</a>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
+
+    <script>
+        let temperatureData;
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        const choroplethColors = [
+            "#D35400", // Dark Orange
+            "#E67E22", // Soft Orange
+            "#F39C12", // Golden Yellow
+            "#F1C40F", // Muted Yellow
+            "#A2C96D", // Olive Green
+            "#7FBF80", // Soft Green
+            "#5DAEA4", // Soft Teal
+            "#4682B4"  // Steel Blue
+        ];
+
+        var url = 'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
+        var urlCounties = 'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const temperatureData = data.monthlyVariance;
+                const baseTemperature = data.baseTemperature;
+
+                const minTemp = d3.min(temperatureData, (d) => d.variance) + baseTemperature;
+                const maxTemp = d3.max(temperatureData, (d) => d.variance) + baseTemperature;
+                const range = maxTemp - minTemp;
+
+                const interval = range / 8;
+
+                const choroplethLimits = [minTemp];
+
+                for (let i = 0; i < 8; i++) {
+                    choroplethLimits.push(choroplethLimits[choroplethLimits.length - 1] + interval);
+                }
+
+                const getColorForTemperature = (temp) => {
+
+                    for (let i = 0; i < 8; i++) {
+                        if (choroplethLimits[i] <= temp && (i + 1 == choroplethLimits.length || temp < choroplethLimits[i + 1])) {
+                            return choroplethColors[7 - i];
+                        }
+                    }
+
+                    return '#FFFFFF';
+                }
+
+                renderChart();
+                renderLegend();
+                window.addEventListener('resize', renderChart);
+
+                function renderLegend() {
+                    d3.select("#legend svg").remove();
+
+                    const svg = d3.select("#legend")
+                        .append("svg")
+                        .attr("width", "100%")
+                        .attr("height", "100%")
+                        .attr("overflow", "visible");
+
+                    const svgWidth = svg.node().getBoundingClientRect().width;
+                    const svgHeight = svg.node().getBoundingClientRect().height;
+
+                    const yScale = d3.scaleLinear()
+                        .domain([minTemp, maxTemp])
+                        .range([0, 350]);
+
+                    const yAxis = d3.axisLeft(yScale)
+                        .tickValues(choroplethLimits)
+                        .tickFormat((value) => value.toFixed(2));
+
+                    svg.append("g")
+                        .style("font-size","13px")
+                       .call(yAxis);
+
+                    const rectHeight = yScale(minTemp+interval) - yScale(minTemp);
+                    
+                    svg.selectAll("rect")
+                       .data(choroplethLimits.filter((d,i,x) => i+1 < x.length))
+                       .enter()
+                       .append("rect")
+                       .attr("x", 0)
+                       .attr("y", (d,i) => (yScale(minTemp) + i*rectHeight).toFixed(2) )
+                       .attr("height", rectHeight.toFixed(2))
+                       .attr("width","10px")
+                       .attr("fill", (d,i) => choroplethColors[7 - i]);
+
+                }
+
+                function renderChart() {
+
+                    d3.select("#choropleth-chart svg").remove();
+
+                    const svg = d3.select("#choropleth-chart")
+                        .append("svg")
+                        .attr("width", "100%")
+                        .attr("height", "100%")
+                        .attr("overflow", "visible");
+
+                    const svgWidth = svg.node().getBoundingClientRect().width;
+                    const svgHeight = svg.node().getBoundingClientRect().height;
+                    const barWidth = svgWidth / temperatureData.length * 12;
+
+                    const yScale = d3.scaleBand()
+                        .domain([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+                        .range([svgHeight, 0]);
+
+                    const xScale = d3.scaleLinear()
+                        .domain([d3.min(temperatureData, d => d.year) - 1, d3.max(temperatureData, d => d.year) + 1])
+                        .range([0, svgWidth - barWidth]);
+
+                    svg.selectAll("rect")
+                        .data(temperatureData)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "cell")
+                        .attr("x", (d) => {
+                            return xScale(d.year);
+                        })
+                        .attr("y", (d) => {
+                            return yScale(d.month);
+                        })
+                        .attr("width", d => {
+                            return barWidth;
+                        })
+                        .attr("height", d => {
+                            return yScale.bandwidth();
+                        })
+                        .attr("data-year", d => d.year)
+                        .attr("data-month", d => d.month - 1)
+                        .attr("data-temp", d => baseTemperature + d.variance)
+                        .attr("fill", (d) => {
+                            return getColorForTemperature(d.variance + baseTemperature);
+                        })
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+                            const temperature = (baseTemperature + d.variance).toFixed(2);
+
+                            tooltip
+                                .style("left", event.pageX + (event.pageX > (document.body.clientWidth - 150) ? (-120) : 20) + "px")
+                                .style("top", event.pageY - 20 + "px")
+                                .style("opacity", 1)
+                                .attr("data-year", d.year)
+                                .html(`${d.year} - ${months[d.month - 1]}<br>${temperature} °C<br>${d.variance.toFixed(2)} °C`);
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").style("opacity", 0);
+                        });
+
+                    const xAxis = d3.axisBottom(xScale)
+                        .tickFormat(String);
+
+                    svg.append("g")
+                        .attr("id", "x-axis")
+                        .attr("transform", "translate(0, " + (svgHeight) + ")")
+                        .call(xAxis);
+
+                    const yAxis = d3.axisLeft(yScale)
+                        .tickFormat((d) => {
+                            return months[d - 1];
+                        });
+
+                    svg.append("g")
+                        .attr("id", "y-axis")
+                        .call(yAxis);
+                }
+            });
+
+
+    </script>
+</body>
+
+</html>
