@@ -64,6 +64,9 @@
         #choropleth-chart {
             width: 100%;
             height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .bar:hover {
@@ -180,10 +183,12 @@
 
                 d3.select("#choropleth-chart svg").remove();
 
+                const [x1, y1, x2, y2] = countiesData.bbox; 
+
                 const svg = d3.select("#choropleth-chart")
                     .append("svg")
-                    .attr("width", "100%")
-                    .attr("height", "100%");
+                    .attr("width", x2-x1)
+                    .attr("height", y2-y1);
 
                 const svgWidth = svg.node().getBoundingClientRect().width;
                 const svgHeight = svg.node().getBoundingClientRect().height;
