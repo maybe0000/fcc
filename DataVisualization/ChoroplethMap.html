@@ -194,6 +194,46 @@
             console.log('choroplethlimits', choroplethLimits);
 
             renderChart();
+            renderLegend();
+            window.addEventListener('resize', renderChart);
+
+            function renderLegend() {
+                d3.select("#legend svg").remove();
+
+                const svg = d3.select("#legend")
+                    .append("svg")
+                    .attr("width", "100%")
+                    .attr("height", "100%")
+                    .attr("overflow", "visible");
+
+                const svgWidth = svg.node().getBoundingClientRect().width;
+                const svgHeight = svg.node().getBoundingClientRect().height;
+
+                const yScale = d3.scaleLinear()
+                    .domain([minPerc, maxPerc])
+                    .range([0, 350]);
+
+                const yAxis = d3.axisLeft(yScale)
+                    .tickValues(choroplethLimits)
+                    .tickFormat((value) => value.toFixed(0)+'%');
+
+                svg.append("g")
+                    .style("font-size", "13px")
+                    .call(yAxis);
+
+                const rectHeight = yScale(minPerc + interval) - yScale(minPerc);
+
+                svg.selectAll("rect")
+                    .data(choroplethLimits.filter((d, i, x) => i + 1 < x.length))
+                    .enter()
+                    .append("rect")
+                    .attr("x", 0)
+                    .attr("y", (d, i) => (yScale(minPerc) + i * rectHeight).toFixed(0))
+                    .attr("height", rectHeight.toFixed(2))
+                    .attr("width", "10px")
+                    .attr("fill", (d, i) => choroplethColors[i]);
+
+            }
 
             function renderChart() {
 
