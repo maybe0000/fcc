@@ -158,15 +158,8 @@
 
     <script>
 
-        const choroplethColors = [
-            "#003f5c", // Dark Navy Blue
-            "#2f4b7c", // Deep Blue
-            "#665191", // Blue Violet
-            "#a05195", // Soft Purple Blue
-            "#d45087", // Medium Blue
-            "#f95d6a", // Light Coral Blue
-            "#ff7c43"  // Soft Blue-Orange
-        ];
+        const choroplethColors = 
+        ['#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b'];
 
         const urlEducation = 'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
         const urlCounties = 'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
@@ -175,7 +168,30 @@
             return Promise.all([educationData.json(), countiesData.json()]);
         }).then(([educationData, countiesData]) => {
 
-            console.log(educationData);
+            const minPerc = d3.min(educationData, (d) => d.bachelorsOrHigher);
+            const maxPerc = d3.max(educationData, (d) => d.bachelorsOrHigher);
+            const range = maxPerc - minPerc;
+
+            const interval = range / 8;
+
+            const choroplethLimits = [minPerc];
+
+            for (let i = 0; i < 8; i++) {
+                choroplethLimits.push(choroplethLimits[choroplethLimits.length - 1] + interval);
+            }
+
+            const getColorForPerc = (perc) => {
+
+                for (let i = 0; i < 8; i++) {
+                    if (choroplethLimits[i] <= perc && (i + 1 == choroplethLimits.length || perc < choroplethLimits[i + 1])) {
+                        return choroplethColors[i];
+                    }
+                }
+
+                return '#FFFFFF';
+            }
+
+            console.log('choroplethlimits',choroplethLimits);
 
             renderChart();
 
@@ -183,12 +199,12 @@
 
                 d3.select("#choropleth-chart svg").remove();
 
-                const [x1, y1, x2, y2] = countiesData.bbox; 
+                const [x1, y1, x2, y2] = countiesData.bbox;
 
                 const svg = d3.select("#choropleth-chart")
                     .append("svg")
-                    .attr("width", x2-x1)
-                    .attr("height", y2-y1);
+                    .attr("width", x2 - x1)
+                    .attr("height", y2 - y1);
 
                 const svgWidth = svg.node().getBoundingClientRect().width;
                 const svgHeight = svg.node().getBoundingClientRect().height;
@@ -203,11 +219,17 @@
                     .append('path')
                     .attr('class', 'county')
                     .attr('data-fips', (d) => d.id)
-                    .attr('data-education', (d,i) => {
-                        const edu = educationData.find( (obj) => {
+                    .attr('data-education', (d, i) => {
+                        const edu = educationData.find((obj) => {
                             return d.id === obj.fips;
                         });
                         return edu === null ? 0 : edu.bachelorsOrHigher;
+                    })
+                    .attr('fill', (d, i) => {
+                        const edu = educationData.find((obj) => {
+                            return d.id === obj.fips;
+                        });
+                        return edu === null ? getColorForPerc(0) : getColorForPerc(edu.bachelorsOrHigher);
                     })
                     .attr('d', path);
 
