@@ -119,8 +119,8 @@
 
         #tooltip {
             position: absolute;
-            background-color: rgb(190, 202, 181);
-            border: 1px solid teal;
+            background-color: rgb(174, 235, 235);
+            border: 1px solid rgb(70, 183, 206);
             padding: 1vh;
             border-radius: 1vh;
             pointer-events: none;
@@ -158,8 +158,8 @@
 
     <script>
 
-        const choroplethColors = 
-        ['#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b'];
+        const choroplethColors =
+            ['#deebf7', '#c6dbef', '#9ecae1', '#6baed6', '#4292c6', '#2171b5', '#08519c', '#08306b'];
 
         const urlEducation = 'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
         const urlCounties = 'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
@@ -191,7 +191,7 @@
                 return '#FFFFFF';
             }
 
-            console.log('choroplethlimits',choroplethLimits);
+            console.log('choroplethlimits', choroplethLimits);
 
             renderChart();
 
@@ -230,6 +230,23 @@
                             return d.id === obj.fips;
                         });
                         return edu === null ? getColorForPerc(0) : getColorForPerc(edu.bachelorsOrHigher);
+                    })
+                    .on("mouseover", (event, d) => {
+                        const tooltip = d3.select("#tooltip");
+
+                        const edu = educationData.find((obj) => {
+                            return d.id === obj.fips;
+                        });
+
+                        tooltip
+                            .style("left", event.pageX + (event.pageX > (document.body.clientWidth - 150) ? (-120) : 20) + "px")
+                            .style("top", event.pageY - 20 + "px")
+                            .style("opacity", 1)
+                            .attr("data-education", edu === null ? 0 : edu.bachelorsOrHigher)
+                            .html(`${edu.area_name}, ${edu.state}: ${edu.bachelorsOrHigher}%`);
+                    })
+                    .on("mouseout", () => {
+                        d3.select("#tooltip").style("opacity", 0);
                     })
                     .attr('d', path);
 
