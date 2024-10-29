@@ -105,7 +105,7 @@
                                             .sort((a,b) =>  Number(b.value) - Number(a.value));
 
                     const root = d3.treemap()
-                                   .tile(d3.treemapSquarify)
+                                   .tile(d3.treemapBinary)
                                    .size([svgWidth,svgHeight])
                                    .padding(0.3);
 
