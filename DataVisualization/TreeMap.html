@@ -31,7 +31,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 90%;
+            height: 92%;
             width: 98%;
         }
 
@@ -60,6 +60,20 @@
         #treemap-chart {
             width: 100%;
             height: 95%;
+        }
+
+        #tooltip {
+            position: absolute;
+            background-color: lightgray;
+            border: 1px solid grey;
+            padding: 1vh;
+            border-radius: 1vh;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: black;
+            font-size: small;
+            text-align: center;
         }
     </style>
     <div id="main-screen">
@@ -101,32 +115,53 @@
                     const svgHeight = svg.node().getBoundingClientRect().height;
 
                     const dataHierarchy = d3.hierarchy(data)
-                                            .sum(d => Number(d.value))
-                                            .sort((a,b) =>  Number(b.value) - Number(a.value));
+                        .sum(d => Number(d.value))
+                        .sort((a, b) => Number(b.value) - Number(a.value));
 
                     const root = d3.treemap()
-                                   .tile(d3.treemapSquarify)
-                                   .size([svgWidth,svgHeight])
-                                   .padding(0.3);
+                        // .tile(d3.treemapSquarify)
+                        .size([svgWidth, svgHeight])
+                        .padding(0.3);
 
                     const leaves = root(dataHierarchy).leaves();
 
-                    console.log(leaves);
-
                     svg.selectAll("rect")
-                       .data(leaves)
-                       .enter()
-                       .append("rect")
-                       .attr("class","tile")
-                       .attr("width", (d) => d.x1 - d.x0)
-                       .attr("height", ({y1,y0}) => y1-y0)
-                       .attr("x", ({x0}) => x0)
-                       .attr("y", ({y0}) => y0)
-                       .attr("fill", ({data: {category}}) => color(category))
-                       .attr("data-name", ({data}) => data.name)
-                       .attr("data-category", ({data}) => data.category)
-                       .attr("data-value", ({data}) => data.value);
+                        .data(leaves)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "tile")
+                        .attr("width", (d) => d.x1 - d.x0)
+                        .attr("height", ({ y1, y0 }) => y1 - y0)
+                        .attr("x", ({ x0 }) => x0)
+                        .attr("y", ({ y0 }) => y0)
+                        .attr("fill", ({ data: { category } }) => color(category))
+                        .attr("data-name", ({ data }) => data.name)
+                        .attr("data-category", ({ data }) => data.category)
+                        .attr("data-value", ({ data }) => data.value)
+                        .on("mouseover", (event, d) => {
+                            const tooltip = d3.select("#tooltip");
+                            console.log(d);
 
+                            tooltip
+                                .style("left", event.pageX + (event.pageX > (document.body.clientWidth - 150) ? (-120) : 20) + "px")
+                                .style("top", event.pageY - 20 + "px")
+                                .style("opacity", 1)
+                                .attr("data-value", d.value)
+                                .html(`${d.data.name}<br>${d.data.category}<br>${d.value}`);
+                        })
+                        .on("mouseout", () => {
+                            d3.select("#tooltip").style("opacity", 0);
+                        });
+
+                    svg.selectAll("text")
+                        .data(leaves)
+                        .enter()
+                        .append("text")
+                        .attr("x", (d) => d.x0 + 5)
+                        .attr("y", (d) => d.y0 + 15)
+                        .attr("font-size", "10px")
+                        .attr("fill", "white")
+                        .text(d => d.data.name);
                 }
             });
     </script>
