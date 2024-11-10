@@ -87,20 +87,6 @@
         </div>
         <div id="treemap-chart">
         </div>
-        <!-- <div id="tooltip"></div>
-        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-     version="1.2" baseProfile="tiny" viewBox="0 0 220 320">
-
-  <text>Basic textflow</text>
-  <g requiredFeatures="http://www.w3.org/Graphics/SVG/feature/1.2/#TextFlow">
-    <textArea font-size="25" font-family="monospace" x="10" y="10" width="200" 
-    height="300">Tomorrow, and tomorrow, and
-    tomorrow; creeps in this petty pace from day to day, until the last syll&#xAD;able of recorded
-    time. And all our yesterdays have lighted fools the way to dusty death.</textArea>
-  </g>
-  <rect x="5" y="5" width="210" height="310" stroke-width="3" stroke="#777" fill="none"/>
-
-</svg> -->
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
     <script>
@@ -132,12 +118,11 @@
                         .sort((a, b) => Number(b.value) - Number(a.value));
 
                     const root = d3.treemap()
-                        // .tile(d3.treemapSquarify)
                         .size([svgWidth, svgHeight])
                         .padding(0.3);
 
                     const leaves = root(dataHierarchy).leaves();
-
+                    
                     svg.selectAll("rect")
                         .data(leaves)
                         .enter()
@@ -171,22 +156,18 @@
                         .append("text")
                         .attr("x", (d) => d.x0 + 5)
                         .attr("y", (d) => d.y0 + 15)
-                        .attr("font-size", "10px")
+                        .attr("font-size", "9px")
                         .attr("fill", "white")
-                        .text(d => d.data.name);
+                        .selectAll('tspan')
+                        .data(function (d) {
+                            return d.data.name.split(/(?=[A-Z][^A-Z])/g).map(word => ({word, meta: d}));
+                        })
+                        .enter()
+                        .append('tspan')
+                        .attr('x', ({meta}) => 5+meta.x0)
+                        .attr('y', ({meta}, i) => meta.y0+15+i*10)
+                        .text(d => d.word);
 
-                    // svg.selectAll("textArea")
-                    //     .data(leaves)
-                    //     .enter()
-                    //     .append("textArea")
-                    //     .attr("x", (d) => d.x0 + 5)
-                    //     .attr("y", (d) => d.y0 + 15)
-                    //     .attr("width", (d) => d.x1 - d.x0)
-                    //     .attr("height", ({ y1, y0 }) => y1 - y0)
-                    //     .attr("font-size","10px")
-                    //     .attr("font-family","Aldrich")
-                    //     .attr("fill", "white")
-                    //     .text(d => d.data.name);
                 }
             });
     </script>
