@@ -32,7 +32,7 @@
             justify-content: center;
             align-items: center;
             height: 92%;
-            width: 98%;
+            width: 85%;
         }
 
         .titles {
@@ -75,6 +75,13 @@
             font-size: small;
             text-align: center;
         }
+
+        #legend {
+            background-color: white;
+            right: 0.5%;
+            top: 40%;
+            position: absolute;
+        }
     </style>
     <div id="main-screen">
         <div class="titles">
@@ -87,6 +94,8 @@
         </div>
         <div id="treemap-chart">
         </div>
+        <div id="legend"></div>
+        <div id="tooltip"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
     <script>
@@ -98,11 +107,11 @@
                 const color = d3.scaleOrdinal(movieCategories, d3.schemeTableau10);
 
                 renderChart();
-                // renderLegend();
                 window.addEventListener('resize', renderChart);
 
                 function renderChart() {
                     d3.select("#treemap-chart svg").remove();
+                    d3.select("#legend svg").remove();
 
                     const svg = d3.select("#treemap-chart")
                         .append("svg")
@@ -119,10 +128,10 @@
 
                     const root = d3.treemap()
                         .size([svgWidth, svgHeight])
-                        .padding(0.3);
+                        .paddingInner(0.3);
 
                     const leaves = root(dataHierarchy).leaves();
-                    
+
                     svg.selectAll("rect")
                         .data(leaves)
                         .enter()
@@ -160,14 +169,40 @@
                         .attr("fill", "white")
                         .selectAll('tspan')
                         .data(function (d) {
-                            return d.data.name.split(/(?=[A-Z][^A-Z])/g).map(word => ({word, meta: d}));
+                            return d.data.name.split(/(?=[A-Z][^A-Z])/g).map(word => ({ word, meta: d }));
                         })
                         .enter()
                         .append('tspan')
-                        .attr('x', ({meta}) => 5+meta.x0)
-                        .attr('y', ({meta}, i) => meta.y0+15+i*10)
+                        .attr('x', ({ meta }) => 5 + meta.x0)
+                        .attr('y', ({ meta }, i) => meta.y0 + 15 + i * 10)
                         .text(d => d.word);
 
+                    const legendSvg = d3.select("#legend")
+                        .append("svg")
+                        .attr("width", 100)
+                        .attr("height", 125);
+
+                    legendSvg.selectAll("rect")
+                        .data(movieCategories)
+                        .enter()
+                        .append("rect")
+                        .attr("class","legend-item")
+                        .attr("x", 15)
+                        .attr("y", (d, i) => 10+16 * i)
+                        .attr("height", 10)
+                        .attr("width", 10)
+                        .attr("fill", color);
+
+                    legendSvg.selectAll("text")
+                        .data(movieCategories)
+                        .enter()
+                        .append("text")
+                        .attr("x", 30)
+                        .attr("y", (d, i) => 16+16 * i)
+                        .text(mc => mc)
+                        .style("font-size", "11px")
+                        .attr("alignment-baseline", "middle")
+                        .attr("fill", "black");
                 }
             });
     </script>
