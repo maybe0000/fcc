@@ -1,0 +1,21 @@
+html,
+body {
+    background-color: rgb(129, 163, 167);
+    font-family: 'Iceland', sans-serif;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: rgb(250, 252, 217);
+}
+
+main {
+    background-color: antiquewhite;
+    height: 90%;
+    width: 60%;
+    color: navy;
+    text-align: center;
+}
