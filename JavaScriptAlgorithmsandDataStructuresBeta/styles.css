@@ -47,6 +47,11 @@ main {
     height: 100%;
     width: min(100vw, 450px);
     margin: 2vh 1vh;
+    color: beige;
+    font-size: larger;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 footer,
@@ -65,4 +70,8 @@ a {
 footer a:hover {
     color: rgb(18, 32, 9);
     text-decoration: underline;
+}
+
+.fa-lightbulb {
+    color: rgb(228, 228, 55);
 }
