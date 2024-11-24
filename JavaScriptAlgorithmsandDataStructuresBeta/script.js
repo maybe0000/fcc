@@ -20,12 +20,7 @@ const printResult = (event) => {
         alert('Please input a value');
         return;
     }
-    if(checkIfPalindrome(input)) {
-        result.innerText = `${input} is a palindrome.`;
-    }
-    else {
-        result.innerText = `${input} is not a palindrome.`;
-    }
+    result.innerText = `${input} is ${checkIfPalindrome(input) ? '' : 'not'} a palindrome.`;
 };
 
 checkButton.addEventListener("click",  printResult);
