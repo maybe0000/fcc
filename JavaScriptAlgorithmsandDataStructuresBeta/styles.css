@@ -10,12 +10,41 @@ body {
     justify-content: center;
     align-items: center;
     color: rgb(250, 252, 217);
+    box-sizing: border-box;
 }
 
 main {
-    background-color: antiquewhite;
-    height: 90%;
-    width: 60%;
+    height: 100%;
+    width: 100%;
     color: navy;
     text-align: center;
+    font-size: larger;
+    max-height: 500px;
 }
+
+#main-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+#palindrome-checker {
+    background-color: beige;
+    border: 1px solid navy;
+    border-radius: 5%;
+    height: 100%;
+    width: min(100vw, 450px);
+    margin: 2vh 1vh;
+}
+
+#palindrome-info {
+    background-color: rgb(2, 94, 2);
+    border: 1px solid navy;
+    border-radius: 5%;
+    height: 100%;
+    width: min(100vw, 450px);
+    margin: 2vh 1vh;
+}
+
