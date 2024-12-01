@@ -55,23 +55,21 @@ h1 {
     height: 100px;
     margin-top: 5vh;
     text-align: center;
-    font-size: x-large;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: x-large;
 }
-/* 
+
 .warning {
     background-color: rgb(210, 139, 139);
     color: brown;
-    font-size: medium;
-} */
+    font-size: medium !important;
+}
 
-/* 
 .hidden {
     display: none;
-
-} */
+}
 
 footer,
 a {
