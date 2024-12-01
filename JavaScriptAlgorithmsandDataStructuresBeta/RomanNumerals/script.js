@@ -13,7 +13,6 @@ const removeWarning = () => {
 }
 
 const printResult = () => {
-    
 
     if(!numberInput.value) {
         output.innerText = "Please enter a valid number.";
