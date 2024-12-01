@@ -36,6 +36,7 @@ h1 {
     width: 50%;
     padding: 0;
     height: 30px;
+    border: 1px solid var(--text-color);
 }
 
 #convert-btn {
@@ -46,8 +47,31 @@ h1 {
     color: white;
     height: 30px;
     font-family: "Cinzel";
-    border: 1px solid #000;
+    border: 1px solid var(--text-color);
 }
+
+#output {
+    border: 1px solid var(--text-color);
+    height: 100px;
+    margin-top: 5vh;
+    text-align: center;
+    font-size: x-large;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* 
+.warning {
+    background-color: rgb(210, 139, 139);
+    color: brown;
+    font-size: medium;
+} */
+
+/* 
+.hidden {
+    display: none;
+
+} */
 
 footer,
 a {
