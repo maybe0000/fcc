@@ -10,7 +10,26 @@ const setWarning = () => {
 const removeWarning = () => {
     output.classList.remove("hidden"); 
     output.classList.remove("warning"); 
-}
+};
+
+const convertToRoman = (num) => {
+    const m = Math.floor(num/1000);
+    const d = num % 1000;
+    const c = Math.floor( ((num % 1000) - 500) / 100 );
+    const ccc = Math.floor(d/100);
+    const x = num % 100;
+    const l = Math.floor( ((num % 100) - 50) / 10 );
+    const xxx = Math.floor(x/10);
+    const i = num % 10;
+    const v = Math.floor(((num % 10) - 5));
+    const iii = Math.floor(i);
+
+    return    'M'.repeat(m) 
+            + (d >= 900 ? 'CM' : d >= 500 ? 'D'+'C'.repeat(c) : d >= 400 ? 'CD' : 'C'.repeat(ccc))
+            + (x >= 90 ? 'XC' : x>= 50 ? 'L'+'X'.repeat(l) : x>=40 ? 'XL' : 'X'.repeat(xxx))
+            + (i >= 9 ? 'IX' : i>= 5 ? 'V'+'I'.repeat(v) : i>=4 ? 'IV' : 'I'.repeat(iii))
+            ;
+};
 
 const printResult = () => {
 
@@ -24,8 +43,13 @@ const printResult = () => {
         setWarning();
         return;
     }
+    else if (numberInput.value >= 4000) {
+        output.innerText = "Please enter a number less than or equal to 3999.";
+        setWarning();
+        return;
+    }
     else {
-        output.innerHTML = numberInput.value;
+        output.innerHTML = convertToRoman(numberInput.value);
         removeWarning();
     }
 };
