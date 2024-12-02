@@ -2,14 +2,18 @@ const numberInput = document.getElementById("number");
 const output = document.getElementById("output");
 const button = document.getElementById("convert-btn");
 
+document.addEventListener("DOMContentLoaded", () => {
+    output.classList.add("hidden");
+})
+
 const setWarning = () => {
-    output.classList.add("hidden"); 
+    output.classList.remove("hidden"); 
     output.classList.add("warning"); 
 };
 
 const removeWarning = () => {
-    output.classList.remove("hidden"); 
     output.classList.remove("warning"); 
+    output.classList.remove("hidden"); 
 };
 
 const convertToRoman = (num) => {
