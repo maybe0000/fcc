@@ -7,14 +7,17 @@ body {
     font-family: "Cinzel", serif;
     background-color: var(--background-color);
     color: var(--text-color);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+main {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 h1 {
@@ -24,6 +27,7 @@ h1 {
 
 #main-screen  {
     max-width: 350px;
+    width: 100%;
 }
 
 #converter {
@@ -35,6 +39,7 @@ h1 {
     justify-content: center;
     border: 1px solid var(--text-color);
     padding: 0;
+    width: 100%;
 }
 
 #number {
