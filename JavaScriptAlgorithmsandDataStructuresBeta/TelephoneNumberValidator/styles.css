@@ -45,11 +45,16 @@
 
   #user-input {
     width: 275px;
-    height: 25px;
+    height: 30px;
+    text-align: center;
+    margin: 3px;
+    font-size: medium;
   }
 
   #results-div {
     margin: 3px;
+    max-height: 200px;
+    overflow-y: auto;
   }
 
   #buttons-container {

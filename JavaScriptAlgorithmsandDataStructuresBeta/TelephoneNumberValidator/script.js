@@ -4,19 +4,8 @@ const userInput = document.getElementById('user-input');
 const resultsDiv = document.getElementById('results-div');
 
 const checkInput = (input) => {
-    const noOfDigits = input.replace(/[-()\s]+/g,'').length;
-    if(noOfDigits === 11) {
-        if(input.charAt(0) !== '1') {
-            return false;
-        }
-        else {
-            return true;
-        }
-    } else if (noOfDigits === 10) {
-            return true;
-    } else {
-        return false;
-    }
+    const regex = (/^1?\s?(\d{3}|\(\d{3}\))(\s|-)?\d{3}(\s|-)?\d{4}$/);
+    return regex.test(input);
 };
 
 const printResult = () => {
@@ -30,6 +19,7 @@ const printResult = () => {
             resultsDiv.innerHTML += `Invalid US number: ${userInput.value}<br></br>`;
         }
     }
+    userInput.value = '';
 };
 
 checkBtn.addEventListener('click',() => printResult());
@@ -41,4 +31,5 @@ userInput.addEventListener('keydown',(e) => {
 
 clearBtn.addEventListener('click', () => {
     resultsDiv.textContent = '';
+    userInput.value = '';
 });
