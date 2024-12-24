@@ -1,76 +1,25 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  :root {
-    --main-bg-color: #1b1b32;
-    --light-grey: #f5f6f7;
-    --dark-purple: #5a01a7;
-    --golden-yellow: #feac32;
-  }
-  
-  body {
-    background-color: var(--main-bg-color);
-    text-align: center;
-    color: var(--light-grey);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .title {
-    margin: 100px 0 20px 0;
-  }
-  
-  #cash-register-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    flex-direction: column;
-    background-color: lightgray;
-    color: black;
-    width: 300px;
-    height: 400px;
-  }
-  
-  #input-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+let price = 1.87;
+let cid = [
+  ['PENNY', 1.01],
+  ['NICKEL', 2.05],
+  ['DIME', 3.1],
+  ['QUARTER', 4.25],
+  ['ONE', 90],
+  ['FIVE', 55],
+  ['TEN', 20],
+  ['TWENTY', 60],
+  ['ONE HUNDRED', 100]
+];
 
-  #cash {
-    width: 275px;
-    height: 30px;
-    text-align: center;
-    margin: 3px;
-    font-size: medium;
-  }
+const cashInput = document.getElementById('cash');
+const changeDue = document.getElementById('change-due');
+const purchaseBtn = document.getElementById('purchase-btn');
 
-  #results-div {
-    margin: 3px;
-    max-height: 200px;
-    overflow-y: auto;
-  }
+const clearInput = () => {
+    cashInput.value='';
+};
 
-  #buttons-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  } 
-
-  .btn {
-    cursor: pointer;
-    width: 100px;
-    margin: 10px;
-    color: var(--main-bg-color);
-    font-size: 14px;
-    background-color: var(--golden-yellow);
-    background-image: linear-gradient(#fecc4c, #ffac33);
-    border-color: var(--golden-yellow);
-    border-width: 3px;
-  }
+purchaseBtn.addEventListener('click',() => {
+    const floatInput = parseFloat(cashInput.value);
+    if(floatInput < price) {
+        alert("Customer does not have enough money to purchase the it
