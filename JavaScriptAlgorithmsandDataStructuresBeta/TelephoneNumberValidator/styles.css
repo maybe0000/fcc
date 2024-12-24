@@ -43,9 +43,13 @@
     align-items: center;
   }
 
-  #phone-number {
+  #user-input {
     width: 275px;
     height: 25px;
+  }
+
+  #results-div {
+    margin: 3px;
   }
 
   #buttons-container {
