@@ -29,6 +29,18 @@ const titles = {
     "ONE HUNDRED": 'Hundreds'
 };
 
+const values = {
+    PENNY: 0.01,
+    NICKEL: 0.05,
+    DIME: 0.1,
+    QUARTER: 0.25,
+    ONE: 1,
+    FIVE: 5,
+    TEN: 10,
+    TWENTY: 20,
+    "ONE HUNDRED": 100
+};
+
 let cidSum = parseFloat((cid.reduce((sum,i) => sum+i[1],0)).toFixed(2));
 priceOfItem.textContent = `Total: $${price}`;
 
@@ -49,7 +61,18 @@ const clearInput = () => {
 
 const returnChange = (floatInput) => {
     let change = parseFloat((floatInput-price).toFixed(2));
-    return change.toString();
+    let tmp = change;
+
+    for(let i=cid.length-1;i>=0;i--) {
+        let howMany = Math.floor(tmp/values[cid[i][0]]);
+        let howManyTotal = cid[i][1]/values[cid[i][0]];
+        if(howMany>=1 && howManyTotal>= howMany) {
+            cid[i][1] -= howMany*values[cid[i][0]];
+            tmp -= howMany*values[cid[i][0]];
+        }
+    }
+
+    return;
 };
 
 purchaseBtn.addEventListener('click',() => {
@@ -71,6 +94,7 @@ purchaseBtn.addEventListener('click',() => {
     } else if (floatInput < parseFloat((cidSum+price).toFixed(2))) {
         clearInput();
         changeDue.style.textAlign = 'left';
-        changeDue.innerHTML = `Status: OPEN<br>` + returnChange(floatInput);
+        returnChange(floatInput);
+        cashInDrawer.innerHTML = cidPrint(false,true);
     }
 });
