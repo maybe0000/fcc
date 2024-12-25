@@ -62,17 +62,18 @@ const clearInput = () => {
 const returnChange = (floatInput) => {
     let change = parseFloat((floatInput-price).toFixed(2));
     let tmp = change;
-
+    
     for(let i=cid.length-1;i>=0;i--) {
         let howMany = Math.floor(tmp/values[cid[i][0]]);
-        let howManyTotal = cid[i][1]/values[cid[i][0]];
+        let howManyTotal = Math.round(cid[i][1]/values[cid[i][0]]);
         if(howMany>=1 && howManyTotal>= howMany) {
             cid[i][1] -= howMany*values[cid[i][0]];
-            tmp -= howMany*values[cid[i][0]];
+            tmp = parseFloat((tmp - howMany*values[cid[i][0]]).toFixed(2));
+            console.log(i,cid[i][0],tmp,howMany*values[cid[i][0]]);
         }
     }
 
-    return;
+    return Math.round(tmp) === 0 ? true : false;
 };
 
 purchaseBtn.addEventListener('click',() => {
@@ -94,7 +95,14 @@ purchaseBtn.addEventListener('click',() => {
     } else if (floatInput < parseFloat((cidSum+price).toFixed(2))) {
         clearInput();
         changeDue.style.textAlign = 'left';
-        returnChange(floatInput);
-        cashInDrawer.innerHTML = cidPrint(false,true);
+        if(returnChange(floatInput)) {
+            cashInDrawer.innerHTML = cidPrint(false,true);
+        } else {
+            changeDue.style.textAlign = 'center';
+            changeDue.innerHTML = `Status: INSUFFICIENT_FUNDS<br>`;
+        }
+    } else if (floatInput > parseFloat(cidSum.toFixed(2))) {
+        changeDue.style.textAlign = 'center';
+        changeDue.innerHTML = `Status: INSUFFICIENT_FUNDS<br>`;
     }
 });
