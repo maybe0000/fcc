@@ -4,8 +4,9 @@ const purchaseBtn = document.getElementById('purchase-btn');
 const cashInDrawer = document.getElementById('cash-in-drawer');
 const priceOfItem = document.getElementById('price-of-item');
 
-let price = 3.26;
-let cid = [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]];
+
+let price = 19.5;
+let cid = [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 1], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]];
 
 let previousCid = JSON.parse(JSON.stringify(cid));
 
@@ -33,22 +34,10 @@ const values = {
     "ONE HUNDRED": 100
 };
 
-let cidSum = parseFloat((cid.reduce((sum,i) => sum+i[1],0)).toFixed(2));
-priceOfItem.textContent = `Total: $${price}`;
-
-// const cidPrint = (isOriginal, isOpen) => {
-//     let printedRegister = isOriginal ? (isOpen ? `Status: OPEN<br>` : `Status: CLOSED<br>`) : `<b>Cash in drawer:</b>`;
-//     for(let i = 0; i< cid.length; i++) {
-//         let hasChanged = cid[i][1] !== previousCid[i][1];
-//         let ternaryEx = isOriginal ? (hasChanged ? `${cid[i][0]}: $${parseFloat(Math.abs(cid[i][1]-previousCid[i][1]).toFixed(2))}<br>` : '') : `${titles[cid[i][0]]}: $${cid[i][1]}<br>`;
-//         printedRegister += `${ternaryEx}`;
-//     }
-//     return printedRegister;
-// }
 
 const cidPrint = (isOriginal, isOpen) => {
     let printedRegister = isOriginal 
-        ? (isOpen ? `Status: OPEN<br>` : `Status: CLOSED<br>`) 
+        ? (isOpen ? `<p>Status: OPEN</p>` : `<p>Status: CLOSED</p>`) 
         : `<b>Cash in drawer:</b>`;
 
     if (isOriginal) {
@@ -56,14 +45,14 @@ const cidPrint = (isOriginal, isOpen) => {
         for (let i = cid.length - 1; i >= 0; i--) {
             let hasChanged = cid[i][1] !== previousCid[i][1];
             let ternaryEx = hasChanged 
-                ? `${cid[i][0]}: $${parseFloat(Math.abs(cid[i][1] - previousCid[i][1]).toFixed(2))}<br>` 
+                ? `<p>${cid[i][0]}: $${parseFloat(Math.abs(cid[i][1] - previousCid[i][1]).toFixed(2))}</p>` 
                 : '';
             printedRegister += `${ternaryEx}`;
         }
     } else {
         // Iterate normally for !isOriginal
         for (let i = 0; i < cid.length; i++) {
-            let ternaryEx = `${titles[cid[i][0]]}: $${cid[i][1]}<br>`;
+            let ternaryEx = `<p>${titles[cid[i][0]]}: $${cid[i][1]}</p>`;
             printedRegister += `${ternaryEx}`;
         }
     }
@@ -71,8 +60,6 @@ const cidPrint = (isOriginal, isOpen) => {
     return printedRegister;
 };
 
-
-cashInDrawer.innerHTML = cidPrint(false,false);
 
 const clearInput = () => {
     cashInput.value='';
@@ -90,15 +77,19 @@ const returnChange = (floatInput) => {
             cid[i][1] = parseFloat((cid[i][1] - howMany*values[cid[i][0]]).toFixed(2));
             tmp = parseFloat((tmp - howMany*values[cid[i][0]]).toFixed(2));
         }
-
+        // console.log(change,i,howMany,howManyTotal,cid[i][1],tmp,Math.round(tmp));
     }
 
-    return Math.round(tmp) === 0 ? true : false;
+    return tmp === 0 ? true : false;
 };
 
 const calculate = () => {
     const floatInput = parseFloat(parseFloat(cashInput.value).toFixed(2));
     changeDue.textContent = '';
+    priceOfItem.textContent = `Total: $${price}`;
+    previousCid = JSON.parse(JSON.stringify(cid));
+    let cidSum = parseFloat((cid.reduce((sum,i) => sum+i[1],0)).toFixed(2));
+    cashInDrawer.innerHTML = cidPrint(false,false);
 
     if(floatInput < price) {
         alert("Customer does not have enough money to purchase the item");
@@ -110,8 +101,8 @@ const calculate = () => {
     } else if (floatInput === parseFloat((cidSum+price).toFixed(2))) {
         clearInput();
         changeDue.style.textAlign = 'left';
-        changeDue.innerHTML = cidPrint(true,false);
         cid.forEach(i => i[1] = 0); 
+        changeDue.innerHTML = cidPrint(true,false);
         cashInDrawer.innerHTML = cidPrint(false,true);
         previousCid = JSON.parse(JSON.stringify(cid));
     } else if (floatInput < parseFloat((cidSum+price).toFixed(2))) {
@@ -123,11 +114,11 @@ const calculate = () => {
             previousCid = JSON.parse(JSON.stringify(cid));
         } else {
             changeDue.style.textAlign = 'center';
-            changeDue.innerHTML = `Status: INSUFFICIENT_FUNDS<br>`;
+            changeDue.innerHTML = `<p>Status: INSUFFICIENT_FUNDS</p>`;
         }
     } else if (floatInput > parseFloat(cidSum.toFixed(2))) {
         changeDue.style.textAlign = 'center';
-        changeDue.innerHTML = `Status: INSUFFICIENT_FUNDS<br>`;
+        changeDue.innerHTML = `<p>Status: INSUFFICIENT_FUNDS</p>`;
     }
 };
 
@@ -138,3 +129,9 @@ cashInput.addEventListener('keydown',(e) => {
         calculate();
     }
 });
+
+changeDue.textContent = '';
+priceOfItem.textContent = `Total: $${price}`;
+previousCid = JSON.parse(JSON.stringify(cid));
+let cidSum = parseFloat((cid.reduce((sum,i) => sum+i[1],0)).toFixed(2));
+cashInDrawer.innerHTML = cidPrint(false,false);
