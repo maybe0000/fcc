@@ -32,8 +32,8 @@ const titles = {
 let cidSum = cid.reduce((sum,i) => sum+i[1],0);
 priceOfItem.textContent = `Total: $${price}`;
 
-const cidPrint = (isOriginal) => {
-    let printedRegister = '';
+const cidPrint = (isOriginal, isOpen) => {
+    let printedRegister = isOriginal ? (isOpen ? `Status: OPEN<br>` : `Status: CLOSED<br>`) : `<b>Cash in drawer:</b>`;
     for(let i = 0; i< cid.length; i++) {
         let ternaryEx = isOriginal ? cid[i][0] : titles[cid[i][0]];
         printedRegister += `${ternaryEx}: $${cid[i][1]}<br>`;
@@ -41,7 +41,7 @@ const cidPrint = (isOriginal) => {
     return printedRegister;
 }
 
-cashInDrawer.innerHTML = `<b>Cash in drawer:</b><br>`+cidPrint(false);
+cashInDrawer.innerHTML = cidPrint(false,false);
 
 const clearInput = () => {
     cashInput.value='';
@@ -57,16 +57,19 @@ purchaseBtn.addEventListener('click',() => {
     if(floatInput < price) {
         alert("Customer does not have enough money to purchase the item");
         clearInput();
-    } else if (floatInput === price) {
+    } else if (floatInput === parseFloat(price).toFixed(2)) {
         changeDue.textContent = 'No change due - customer paid with exact cash';
+        changeDue.style.textAlign = 'center';
         clearInput();
     } else if (floatInput === (cidSum+price).toFixed(2)) {
         clearInput();
-        changeDue.innerHTML = `Status: CLOSED<br>` + cidPrint(true);
+        changeDue.style.textAlign = 'left';
+        changeDue.innerHTML = cidPrint(true,false);
         cid.forEach(i => i[1] = 0); 
-        cashInDrawer.innerHTML = `<b>Cash in drawer:</b><br>`+cidPrint(false);
+        cashInDrawer.innerHTML = cidPrint(false,true);
     } else if (floatInput < (cidSum+price).toFixed(2)) {
         clearInput();
+        changeDue.style.textAlign = 'left';
         changeDue.innerHTML = 'Status: OPEN' + returnChange();
     }
 });
