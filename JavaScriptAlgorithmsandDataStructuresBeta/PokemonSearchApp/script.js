@@ -17,6 +17,7 @@ const specialDefense = document.getElementById('special-defense');
 const speed = document.getElementById('speed');
 
 let pokemonData = [];
+let pokemonDetails = {};
 
 fetch('https://pokeapi-proxy.freecodecamp.rocks/api/pokemon')
     .then((res) => res.json())
@@ -38,17 +39,31 @@ const checkInput = (input) => {
     }
 };
 
+const fetchPokemonData = (pokemon) => {
+
+    return fetch(pokemon.url)
+        .then((res) => res.json())
+        .then((details) => {
+                pokemonDetails = details;
+                updateDisplay(pokemon, pokemonDetails);
+        })
+        .catch((err) => {
+            pokemonContainer.innerHTML = '<p style="padding: 10px;">There was an error loading the Pokémon data.</p>';
+        });
+
+};
+
 const clearScreen = () => {
     searchInput.value = '';
     imageContainer.innerHTML = '';
 }    
 
-const updateDisplay = (pokemon) => {
+const updateDisplay = (pokemon, pokemonDetails) => {
     pokemonImg.innerHTML = '';
     pokemonName.textContent = pokemon.name.toUpperCase();
     pokemonId.textContent = '#'+pokemon.id;
     const img = document.createElement('img');
-    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/673.png`;
+    img.src = pokemonDetails.sprites["front_default"];
     img.alt = `${pokemon.name.toLowerCase()}-img`; 
     img.classList.add('createdImg');
     pokemonImg.appendChild(img);
@@ -66,11 +81,16 @@ const displayPokemon = () => {
                 break;
             case 'id':
                 pokemon = pokemonData.find(i => i.id === parseInt(userInput));
-                updateDisplay(pokemon);
+                if(pokemon) {
+                    fetchPokemonData(pokemon);
+                } else {
+                    alert("Pokémon not found");
+                    clearScreen();
+                }
                 break;
             case 'name':
                 pokemon = pokemonData.find(i => i.name.toUpperCase() === userInput.toUpperCase());
-                updateDisplay(pokemon);
+                fetchPokemonData(pokemon);
                 break;         
         }
     }
