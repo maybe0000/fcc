@@ -56,6 +56,10 @@
     height: 300px;
     background-color: #f5f6f7;
     margin: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: start;
   }
 
   #stats-container {
