@@ -13,9 +13,58 @@
     <main>
         <h1 class="title">Pokémon Search App</h1>
         <div id="pokemon-container">
+            <label for="search-input">
+                Search for Pokémon Name or ID:
+            </label>
             <div id="input-container">
                 <input type="text" id="search-input">
-                <button class="btn" id="search-button"></button>
+                <button class="btn" id="search-button">Search</button>
+            </div>
+            <div id="image-container">
+                <div class="pokemon-name-details">
+                    <p id="pokemon-name"></p>
+                    <p id="pokemon-id"></p>
+                </div>
+                <div class="pokemon-w-h-details">
+                    <p id="weight"></p>
+                    <p id="height"></p>
+                </div>
+
+                <p id="types"></p>
+            </div>
+            <div id="stats-container">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th><b>Base</b></th>
+                            <th><b>Stats</b></th>
+                        </tr>
+                        <tr>
+                            <th>HP:</th>
+                            <th id="hp"></th>
+                        </tr>
+                        <tr>
+                            <th>Attack:</th>
+                            <th id="attack"></th>
+                        </tr>
+                        <tr>
+                            <th>Defense:</th>
+                            <th id="defense"></th>
+                        </tr>
+                        <tr>
+                            <th>Sp. Attack:</th>
+                            <th id="special-attack"></th>
+                        </tr>
+                        <tr>
+                            <th>Sp. Defense:</th>
+                            <th id="special-defense"></th>
+                        </tr>
+                        <tr>
+                            <th>Speed:</th>
+                            <th id="speed"></th>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
