@@ -38,14 +38,19 @@ const checkInput = (input) => {
         clearScreen();
     }
 };
-
-const fetchPokemonData = (pokemon) => {
-
+const _RESPONSES = {};
+const fetchPokemonData = async (pokemon) => {
+    if (_RESPONSES[pokemon.url]) {
+        pokemonDetails = _RESPONSES[pokemon.url];
+        updateDisplay(pokemon);
+        return;
+    }
     return fetch(pokemon.url)
         .then((res) => res.json())
         .then((details) => {
+                _RESPONSES[pokemon.url] = details;
                 pokemonDetails = details;
-                updateDisplay(pokemon, pokemonDetails);
+                updateDisplay(pokemon);
         })
         .catch((err) => {
             pokemonContainer.innerHTML = '<p style="padding: 10px;">There was an error loading the Pokémon data.</p>';
@@ -55,7 +60,9 @@ const fetchPokemonData = (pokemon) => {
 
 const clearScreen = () => {
     searchInput.value = '';
-    imageContainer.innerHTML = '';
+    pokemonImg.innerHTML = '';
+    pokemonId.textContent='';
+    pokemonName.textContent='';
     weight.textContent = '';
     height.textContent = '';
     hp.textContent ='';
@@ -67,7 +74,7 @@ const clearScreen = () => {
     types.innerHTML = '';
 }    
 
-const updateDisplay = (pokemon, pokemonDetails) => {
+const updateDisplay = (pokemon) => {
     pokemonImg.innerHTML = '';
     pokemonName.textContent = pokemon.name.toUpperCase();
     pokemonId.textContent = '#'+pokemon.id;
@@ -91,7 +98,7 @@ const updateDisplay = (pokemon, pokemonDetails) => {
     });
 };
 
-const displayPokemon = () => {
+const displayPokemon = async () => {
     if (pokemonData) {
         let userInput = searchInput.value;
         let userInputCheck = checkInput(userInput);
@@ -104,7 +111,7 @@ const displayPokemon = () => {
             case 'id':
                 pokemon = pokemonData.find(i => i.id === parseInt(userInput));
                 if(pokemon) {
-                    fetchPokemonData(pokemon);
+                    await fetchPokemonData(pokemon);
                 } else {
                     alert("Pokémon not found");
                     clearScreen();
@@ -114,7 +121,8 @@ const displayPokemon = () => {
                 // test
                 pokemon = pokemonData.find(i => i.name.toUpperCase() === userInput.toUpperCase());
                 if(pokemon) {
-                    fetchPokemonData(pokemon);
+                    console.log('fetching by name', pokemon);
+                    await fetchPokemonData(pokemon);
                 } else {
                     alert("Pokémon not found");
                     clearScreen();
@@ -125,8 +133,8 @@ const displayPokemon = () => {
 };
 
 searchButton.addEventListener('click', displayPokemon);
-searchInput.addEventListener('keydown', (e) => {
+searchInput.addEventListener('keydown', async (e) => {
     if (e.key === 'Enter') {
-        displayPokemon();
+        await displayPokemon();
     }
 });
