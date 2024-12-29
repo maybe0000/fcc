@@ -62,6 +62,14 @@ const updateDisplay = (pokemon, pokemonDetails) => {
     pokemonImg.innerHTML = '';
     pokemonName.textContent = pokemon.name.toUpperCase();
     pokemonId.textContent = '#'+pokemon.id;
+    weight.textContent = 'Weight: ' + pokemonDetails.weight;
+    height.textContent = 'Height: ' + pokemonDetails.height;
+    hp.textContent = pokemonDetails.stats.find(i => i.stat.name === 'hp').base_stat;
+    attack.textContent = pokemonDetails.stats.find(i => i.stat.name === 'attack').base_stat;
+    defense.textContent = pokemonDetails.stats.find(i => i.stat.name === 'defense').base_stat;
+    specialAttack.textContent = pokemonDetails.stats.find(i => i.stat.name === 'special-attack').base_stat;
+    specialDefense.textContent = pokemonDetails.stats.find(i => i.stat.name === 'special-defense').base_stat;
+    speed.textContent = pokemonDetails.stats.find(i => i.stat.name === 'speed').base_stat;
     const img = document.createElement('img');
     img.src = pokemonDetails.sprites["front_default"];
     img.alt = `${pokemon.name.toLowerCase()}-img`; 
