@@ -56,6 +56,15 @@ const fetchPokemonData = (pokemon) => {
 const clearScreen = () => {
     searchInput.value = '';
     imageContainer.innerHTML = '';
+    weight.textContent = '';
+    height.textContent = '';
+    hp.textContent ='';
+    attack.textContent ='';
+    defense.textContent ='';
+    specialAttack.textContent ='';
+    specialDefense.textContent = '';
+    speed.textContent ='';
+    types.innerHTML = '';
 }    
 
 const updateDisplay = (pokemon, pokemonDetails) => {
@@ -74,7 +83,12 @@ const updateDisplay = (pokemon, pokemonDetails) => {
     img.src = pokemonDetails.sprites["front_default"];
     img.alt = `${pokemon.name.toLowerCase()}-img`; 
     img.classList.add('createdImg');
+    img.id = 'sprite';
     pokemonImg.appendChild(img);
+    types.innerHTML = '';
+    pokemonDetails.types.forEach((el,i) => {
+        types.innerHTML += `<p class='pokemon-type ${el.type.name.toLowerCase()}'>${el.type.name.toUpperCase()}</p>`;
+    });
 };
 
 const displayPokemon = () => {
@@ -95,10 +109,16 @@ const displayPokemon = () => {
                     alert("Pokémon not found");
                     clearScreen();
                 }
-                break;
+                break; 
             case 'name':
+                // test
                 pokemon = pokemonData.find(i => i.name.toUpperCase() === userInput.toUpperCase());
-                fetchPokemonData(pokemon);
+                if(pokemon) {
+                    fetchPokemonData(pokemon);
+                } else {
+                    alert("Pokémon not found");
+                    clearScreen();
+                }
                 break;         
         }
     }
