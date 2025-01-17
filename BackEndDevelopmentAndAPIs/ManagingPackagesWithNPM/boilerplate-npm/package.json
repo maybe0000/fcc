@@ -12,5 +12,6 @@
 		"url": "https://github.com/freeCodeCamp/boilerplate-npm.git"
 	},
 	"author": "Sara Markic",
-	"description": "Learning how to manage Node.js projects and npm packages using package.json"
+	"description": "Learning how to manage Node.js projects and npm packages using package.json",
+	"keywords": ["learning", "freecodecamp","nodejs","npm","backend"]
 }
