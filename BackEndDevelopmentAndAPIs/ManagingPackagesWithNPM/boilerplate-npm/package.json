@@ -13,5 +13,6 @@
 	},
 	"author": "Sara Markic",
 	"description": "Learning how to manage Node.js projects and npm packages using package.json",
-	"keywords": ["learning", "freecodecamp","nodejs","npm","backend"]
+	"keywords": ["learning", "freecodecamp","nodejs","npm","backend"],
+	"license": "AGPL-3.0-only"
 }
