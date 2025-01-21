@@ -18,6 +18,7 @@ app.get('/json', function(req, res) {
     //console.log(process.env.MESSAGE_STYLE)
     let message = process.env.MESSAGE_STYLE == 'uppercase' ? msg.toUpperCase() : msg;
     res.json({"message": message});
+    //res.json({message})
 })
 app.get('/now', function(req, res, next) {
     req.time = new Date().toString();
@@ -27,6 +28,9 @@ app.get('/now', function(req, res, next) {
 })
 app.get('/:word/echo', function(req, res) {
     res.json({echo: req.params.word});
+})
+app.get('/name', function(req, res) {
+    res.json({name: req.query.firstname + ' ' + req.query.lastname});
 })
 
 
