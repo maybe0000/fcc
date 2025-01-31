@@ -25,6 +25,8 @@ const createAndSavePerson = (done) => {
   });
 };
 
+createAndSavePerson(console.log);
+
 const createManyPeople = (arrayOfPeople, done) => {
   Person.create(arrayOfPeople, function (err, data) {
     if (err) {
@@ -127,7 +129,16 @@ const removeManyPeople = (done) => {
 const queryChain = (done) => {
   const foodToSearch = "burrito";
 
-  done(null /*, data*/);
+  Person.findOneByFood(foodToSearch)
+    .sort({ name: 1 })
+    .limit(2)
+    .select("-age")
+    .exec((err, data) => {
+      if (err) {
+        return done(err);
+      }
+      done(null, data)
+    })
 };
 
 /** **Well Done !!**
