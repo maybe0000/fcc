@@ -31,7 +31,9 @@ var listener = app.listen(process.env.PORT || 3000, function () {
 
 app.get('/api/whoami', function (req, res) {
   res.json({
-    ipaddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress
+    ipaddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+    language: req.headers['accept-language'],
+    software: req.headers['user-agent']
   });
 });
 
