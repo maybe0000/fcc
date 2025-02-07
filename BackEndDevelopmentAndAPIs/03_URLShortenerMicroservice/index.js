@@ -43,7 +43,7 @@ app.post('/api/shorturl', (req, res) => {
   try {
     dns.lookup(new URL(url).hostname, async (err) => {
       if (err) {
-        res.json({
+        return res.json({
           error: "Invalid URL"
         });
       }
