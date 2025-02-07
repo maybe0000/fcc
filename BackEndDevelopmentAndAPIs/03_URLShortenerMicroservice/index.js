@@ -62,3 +62,24 @@ app.post('/api/shorturl', (req, res) => {
   }
 
 });
+
+function getKey(shorturl) {
+  for (let [key, value] of shorter.entries()) {
+    if (value === shorturl) {
+      return key;
+    }
+  }
+  return null;
+}
+
+app.get('/api/shorturl/:short', (req, res) => {
+  if (Array.from(shorter.values()).includes(parseInt(req.params.short))) {
+    res.redirect(getKey(parseInt(req.params.short)));
+  } else {
+    return res.json(
+      {
+        "error": "No short URL found for the given input"
+      }
+    );
+  }
+});
